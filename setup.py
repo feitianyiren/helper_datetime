@@ -5,14 +5,14 @@ except ImportError:
 
 setup(
     name='helper_datetime',
-    version='0.1',
+    version='0.2',
     url='https://github.com/shuge/helper_datetime',
     license='MIT License',
     author='Shuge Lee',
     author_email='shuge.lee@gmail.com',
     description='Date & Time Helper',
 
-    scripts = [
-        "helper_datetime.py",
+    packages = [
+        "helper_datetime",
     ],
 )
