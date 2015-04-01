@@ -68,6 +68,13 @@ class HelperDateTime(object):
             if 'year' in group_dict:
                 year = int(group_dict['year'])
 
+                if (year <= 99):
+                    this_year = datetime.date.today().year % 100
+                    if this_year >= year:
+                        year = 2000 + year
+                    else:
+                        year = 1900 + year
+                        
             if 'month' in group_dict:
                 month = int(group_dict['month'])
 
