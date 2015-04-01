@@ -68,13 +68,13 @@ class HelperDateTime(object):
             if 'year' in group_dict:
                 year = int(group_dict['year'])
 
-                if (year <= 99):
-                    this_year = datetime.date.today().year % 100
+                if (year <= 99): 
+                    this_year = datetime.date.today().year % 100 
                     if this_year >= year:
                         year = 2000 + year
                     else:
                         year = 1900 + year
-                        
+
             if 'month' in group_dict:
                 month = int(group_dict['month'])
 
@@ -108,3 +108,22 @@ class HelperDateTime(object):
     @property
     def date(self):
         return datetime.date(year=self._datetime.year, month=self._datetime.month, day=self._datetime.day)
+
+    @property
+    def alias(self):
+        alias_list = []
+
+        # use 2015-04-01 as example
+        alias_list.append(self.format_in_iso8601) # '2015-04-01T10:08:42.120735'
+
+        alias_list.append(self.date.isoformat()) # 2015-04-01
+
+        alias_list.append(self.date.isoformat().replace('-', '')) # 20150401
+
+        f = "%s-%s-%s" % (str(self._datetime.month).zfill(2), str(self._datetime.day).zfill(2), str(self._datetime.year)[2:4])
+        alias_list.append(f) # 04-01-15
+
+        alias_list.append(f.replace('-', '/')) # 04/01/15
+
+        return alias_list
+
