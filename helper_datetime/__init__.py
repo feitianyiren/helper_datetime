@@ -126,4 +126,36 @@ class HelperDateTime(object):
         alias_list.append(f.replace('-', '/')) # 04/01/15
 
         return alias_list
+        
+    @staticmethod
+    def date_range(start, end):
+        """
+        >>> list(HelperDateTime.date_range('20150401', '20150405'))
+        [datetime.date(2015, 4, 1), datetime.date(2015, 4, 2), datetime.date(2015, 4, 3), datetime.date(2015, 4, 4), datetime.date(2015, 4, 5)]
+        """
+        assert len(start) == 8
+        assert len(end) == 8
+
+        yyyy = int(start[:4])
+        mm = int(start[4:6])
+        dd = int(start[6:])
+        start_d  = datetime.date(year=yyyy, month=mm, day=dd)
+
+        yyyy = int(end[:4])
+        mm = int(end[4:6])
+        dd = int(end[6:])
+        end_d  = datetime.date(year=yyyy, month=mm, day=dd)
+
+        days_offset = (end_d - start_d).days
+        if days_offset < 0:
+            raise Exception('start date must be older than end date')
+
+        for day_offset in xrange(0, days_offset + 1):
+            yield start_d + datetime.timedelta(days=day_offset)
+            
+            
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
+
 
