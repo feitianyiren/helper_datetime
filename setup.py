@@ -5,7 +5,7 @@ except ImportError:
 
 setup(
     name='helper_datetime',
-    version='0.4',
+    version='0.5',
     url='https://github.com/shuge/helper_datetime',
     license='MIT License',
     author='Shuge Lee',
