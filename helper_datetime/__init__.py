@@ -2,6 +2,8 @@
 #-*- coding:utf -*-
 import re
 import datetime
+import time
+import iso8601
 
 
 class HelperDateTime(object):
@@ -33,9 +35,6 @@ class HelperDateTime(object):
 
         2015-03-24T06:57:23+00:00
         2015-03-24T06:57:23Z
-
-    >>> HelperDateTime(u'光明頂- 20150324 - 新加坡模式').date
-    datetime.date(2015, 3, 24)
     """
 
     PATTERNS = [
@@ -46,6 +45,10 @@ class HelperDateTime(object):
     ]
 
     def __init__(self, s, pattern=None):
+        """
+        >>> HelperDateTime(u'光明頂- 20150324 - 新加坡模式').date
+        datetime.date(2015, 3, 24)
+        """
         self._datetime = None
         self._parse_datetime(s=s, pattern=pattern)
 
@@ -53,6 +56,12 @@ class HelperDateTime(object):
         if pattern:
             patterns = [pattern]
         else:
+            try:
+                self._datetime = iso8601.parse_date(s)
+                return
+            except iso8601.iso8601.ParseError:
+                pass
+
             patterns = HelperDateTime.PATTERNS
 
         for pattern in patterns:
@@ -91,22 +100,45 @@ class HelperDateTime(object):
                 second = int(group_dict['second'])
 
             self._datetime = datetime.datetime(year=year, month=month, day=day, hour=hour, minute=minute, second=second)
-            break
+            return
+
+
+
+    @property
+    def total_seconds(self):
+        return (self._datetime - datetime.datetime(1970, 1, 1)).total_seconds()
 
     @property
     def format_in_iso8601(self):
+        """
+        >>> HelperDateTime('2015-05-13T16:21:22.715Z').format_in_iso8601
+        '2015-05-13T16:21:22.715000+00:00'
+        """
         return self._datetime.isoformat()
 
     @property
-    def format_in_rfc5322(self):
-        pass
+    def format_in_internet_message_format_timestamp(self):
+        """
+        >>> HelperDateTime('2015-05-14').format_in_internet_message_format_timestamp
+        'Thu, 14 May 2015 00:00:00 GMT'
 
-    @property
-    def format_in_rfc3339(self):
-        pass
+        >>> HelperDateTime('2015-05-13T16:21:22.715Z').format_in_internet_message_format_timestamp
+        'Wed, 13 May 2015 16:21:22 GMT'
+        """
+        return time.strftime("%a, %d %b %Y %H:%M:%S GMT", self._datetime.timetuple())
 
     @property
     def date(self):
+        """
+        >>> HelperDateTime('2015-05-13T16:21:22.715Z').date
+        datetime.date(2015, 5, 13)
+
+        >>> HelperDateTime('2015-05-14').date
+        datetime.date(2015, 5, 14)
+
+        >>> HelperDateTime(u'光明頂- 20150324 - 新加坡模式').date
+        datetime.date(2015, 3, 24)
+        """
         return datetime.date(year=self._datetime.year, month=self._datetime.month, day=self._datetime.day)
 
     @property
